@@ -1,4 +1,4 @@
-module github.com/samvaughton/caddy-netlify-redirects/v2
+module github.com/samvaughton/caddy-netlify-redirects
 
 go 1.16
 
