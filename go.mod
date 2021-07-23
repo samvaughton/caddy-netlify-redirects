@@ -1,4 +1,4 @@
-module github.com/samvaughton/naddy/v2
+module github.com/samvaughton/caddy-netlift-redirects/v2
 
 go 1.16
 

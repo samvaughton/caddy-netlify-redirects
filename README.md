@@ -3,7 +3,18 @@ Enables Caddy to use Netlify's `_redirect` file format
 
 ## Building
 
-TODO
+Within a `Dockerfile` to build:
+
+# Second stage of build
+FROM caddy:2.4.3-builder AS builder
+
+RUN xcaddy build \
+--with github.com/samvaughton/caddy-netlify-redirects/v2
+
+# Third stage of build - container that will actually be saved
+FROM caddy:2.4.3-alpine as serve
+
+COPY --from=builder /usr/bin/caddy /usr/bin/caddy
 
 ## Config
 
