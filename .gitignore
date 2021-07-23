@@ -16,6 +16,7 @@
 
 # Caddy related development
 caddy
+Caddyfile
 
 # IDE
 .idea
