@@ -6,7 +6,6 @@
 
 :2021 {
 	log
-	try_files {path} /
     encode gzip
 	root * /srv
 	file_server
