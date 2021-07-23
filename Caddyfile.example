@@ -1,0 +1,16 @@
+{
+	admin off
+	auto_https off
+	order netlify_redirects before redir
+}
+
+:2021 {
+	log
+	root * /srv
+	file_server
+
+	netlify_redirects {
+		/about-us /contact
+		/url/too/long/* /shortened/:splat
+	}
+}
