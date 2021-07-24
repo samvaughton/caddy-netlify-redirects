@@ -56,8 +56,8 @@ func MatchUrlToRule(rule redirects.Rule, reqUrl *url.URL, ctx *MatchContext) Mat
 		}
 	}
 
-	path := urlpath.New(from.Path)
-	matched, ok := path.Match(reqUrl.Path)
+	path := urlpath.New(strings.Trim(from.Path, "/"))
+	matched, ok := path.Match(strings.Trim(reqUrl.Path, "/"))
 
 	if !ok {
 		return MatchResult{

@@ -22,6 +22,13 @@ func TestRedirects(t *testing.T) {
 		/relative/path/:paramOne /relative/path/redirected/:paramOne
 		/relative/* /path/changed/:splat/hello
 		/test/* /redirect/:splat
+
+		/accommodation/meribel/chalet-le-lys-blanc/5-bedroom-chalet-for-12/  /  410
+		/accommodation/morzine/chalet-chez-claude/5-bedroom-chalet-for-13/  /  410
+		/accommodation/meribel/chalet-camarine/5-bedroom-chalet-for-13/  /  410
+		/accommodation/val-disere/le-chalet-arosa/5-bedroom-for-10/  /  410
+		/accommodation/*  /accommodation/  200
+
 		http://one.test:2021/* http://two.test:2021/:splat
 		one.test:/2021/no-scheme two.test:2021/:splat
 	`))
@@ -56,6 +63,19 @@ func TestRedirects(t *testing.T) {
 			true,
 			false,
 			"/redirect/foobar",
+		},
+		// path or no path
+		{
+			MustParseUrl("http://one.test:2021/accommodation/morzine/chalet-chez-claude/5-bedroom-chalet-for-13"),
+			true,
+			false,
+			"/",
+		},
+		{
+			MustParseUrl("http://one.test:2021/accommodation/morzine/chalet-chez-claude/5-bedroom-chalet-for-13/"),
+			true,
+			false,
+			"/",
 		},
 		// Host
 		{
