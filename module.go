@@ -1,14 +1,12 @@
 package naddy
 
 import (
-	"bytes"
 	"fmt"
 	"github.com/caddyserver/caddy/v2"
 	"github.com/caddyserver/caddy/v2/modules/caddyhttp"
 	"github.com/tj/go-redirects"
 	"html"
 	"net/http"
-	"os"
 	"path"
 	"strconv"
 )
@@ -26,45 +24,6 @@ func (Middleware) CaddyModule() caddy.ModuleInfo {
 
 func (m *Middleware) Provision(ctx caddy.Context) error {
 	m.Logger = ctx.Logger(m)
-
-	/*
-	 * Try and locate a _redirects file, if found, parse it and append
-	 */
-
-	repl := caddy.NewReplacer()
-	root := repl.ReplaceAll("{http.vars.root}", ".")
-	redirectsFile := caddyhttp.SanitizedPathJoin(root, "_redirects")
-
-	if file, err := os.Stat(redirectsFile); err == nil {
-		fileBytes, rErr := os.ReadFile(file.Name())
-
-		if rErr == nil {
-			m.Logger.Info("located _redirects file")
-
-			/*
-			 * Any Caddyfile rules will take precedence over _redirects
-			 * We need to add any _redirect rules to the end of this array
-			 * Since this _redirects file is prone to a lot of change, we
-			 * will make the error handling a bit more lax here
-			 */
-
-			rules, err := redirects.Parse(bytes.NewReader(fileBytes))
-
-			if err != nil {
-				m.Logger.Error("could not parse _redirects file")
-			} else {
-				for _, rule := range rules {
-					m.Redirects = append(m.Redirects, rule)
-				}
-			}
-
-		} else {
-			m.Logger.Error("error reading _redirects file")
-		}
-	} else {
-		m.Logger.Warn("could not locate _redirects file")
-	}
-
 	m.Logger.Info(fmt.Sprintf("provisioned with %v redirects", len(m.Redirects)))
 
 	return nil
