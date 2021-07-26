@@ -1,11 +1,9 @@
 {
-	admin off
-	auto_https off
 	order netlify_redirects before redir
 }
 
-:2021 {
-	log
+:80 {
+    # Sample config for a gatsby website that uses a netlify plugin to generate the _redirects file
     encode gzip
 	root * /srv
 	file_server
