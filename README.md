@@ -1,13 +1,9 @@
 # caddy-netlify-redirects
 Enables Caddy to use Netlify's `_redirect` file format
 
-## Building
+## Building via Docker
 
-Within a `Dockerfile` to build:
-
-# Second stage of build
-
-As an example, within a dockerfile you can build caddy with this custom module:
+As an example, within a dockerfile you can build Caddy with this custom module:
 
 ```dockerfile
 FROM caddy:2.4.3-builder AS builder
@@ -18,7 +14,10 @@ RUN xcaddy build \
 FROM caddy:2.4.3-alpine as serve
 
 COPY --from=builder /usr/bin/caddy /usr/bin/caddy
+COPY ./Caddyfile /etc/caddy/Caddyfile
 
+# Copy over your built assets for your webapp, this could be from gatbsy which includes a _redirects file
+COPY --from=node-builder /usr/src/app/packages/rentivo-gatsby-site/public /srv
 ```
 
 ## Config
