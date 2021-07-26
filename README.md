@@ -1,6 +1,22 @@
 # caddy-netlify-redirects
 Enables Caddy to use Netlify's `_redirect` file format
 
+This module tries to replicate the way Netlify's _redirects file works.
+
+It does support:
+
+   - Host redirection
+   - Path redirection
+   - Other status codes such as `410 Gone` (with a redirect after returning the 410)
+
+It does not (currently) support:
+
+   - Header matching
+   - Query string matching
+   - HTTP -> HTTPS redirection
+
+If you wish to add these features, please open an issue/PR.
+
 ## Building via Docker
 
 As an example, within a dockerfile you can build Caddy with this custom module:
