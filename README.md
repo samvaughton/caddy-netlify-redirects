@@ -1,4 +1,7 @@
 # caddy-netlify-redirects
+
+***For use with Caddy2.***
+
 Enables Caddy to use Netlify's `_redirect` file format
 
 This module tries to replicate the way Netlify's _redirects file works.
