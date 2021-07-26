@@ -13,5 +13,7 @@
 	netlify_redirects {
 		/about-us /contact
 		/url/too/long/* /shortened/:splat
+
+		import /path/to/_netlify
 	}
 }
