@@ -20,6 +20,13 @@ It does not (currently) support:
 
 If you wish to add these features, please open an issue/PR.
 
+## Development
+
+See https://caddyserver.com/docs/extending-caddy and https://github.com/caddyserver/xcaddy
+
+`xcaddy run`
+`xcaddy run --config caddy.json`
+
 ## Building via Docker
 
 As an example, within a dockerfile you can build Caddy with this custom module:
@@ -46,6 +53,10 @@ You will need to set the order of the module with this line:
 ```Caddyfile
 order netlify_redirects before redir
 ```
+
+### Caveat
+
+If the `_redirects` file does not exist when using the `import` directive, Caddy will fail to start. You can fix this by using a glob pattern: `import _redirects*`
 
 ## Adding redirects
 
