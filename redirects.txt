@@ -1,0 +1,7 @@
+## Created with gatsby-plugin-netlify
+https://dormoa-v2.netlify.app/*  https://dormoa.com/:splat  301!
+/property/*  /property/  200
+/en/property/*  /en/property/  200
+/checkout/*  /checkout/  200
+/en/checkout/*  /en/checkout/  200
+/example/bla/bla /en/rentals 301

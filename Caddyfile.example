@@ -1,26 +1,50 @@
 {
-	order netlify_redirects before redir
+    admin off
+	order netlify_redirects before handle
 }
 
-:80 {
-    # Sample config for a gatsby website that uses a netlify plugin to generate the _redirects file
+:2022 {
     encode gzip
-	root * /srv
-	file_server
+	root * ./srv
 
-    # Remove trailing slash for the try_files
-    uri * strip_suffix /
-    try_files {path} {path}/ {dir}/index.html /index.html
+    # turn // into /
+    uri path_regexp /{2,} /
+
+    # redirects
+    netlify_redirects {
+        import ./srv/_redirects*
+    }
+
+    @dynamic {
+        not {
+            file {
+                try_files {dir}index.html
+            }
+        }
+    }
+
+    try_files {path}
+
+    handle @dynamic {
+        uri * strip_suffix /
+        try_files {dir}index.html
+        file_server
+    }
 
     handle_errors {
         rewrite * /{http.error.status_code}.html
         file_server
     }
 
-	netlify_redirects {
-		/about-us /contact
-		/url/too/long/* /shortened/:splat
+    file_server
 
-		import /path/to/_redirects*
-	}
+    log {
+       level DEBUG
+       output file caddy_test.log {
+           roll_size 10MiB
+           roll_keep 10
+           roll_keep_for 336h
+       }
+    }
 }
+
