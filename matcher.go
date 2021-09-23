@@ -58,40 +58,7 @@ func MatchUrlToRule(rule redirects.Rule, reqUrl *url.URL, ctx *MatchContext) Mat
 	path := urlpath.New(strings.Trim(from.Path, "/"))
 	matched, ok := path.Match(strings.Trim(reqUrl.Path, "/"))
 
-	/*
-	 * If this rule has a query string element to it, we need to perform an identical match ONLY
-	 */
-
-	comparePath := reqUrl.Path
-	if comparePath == "" {
-		comparePath = "/"
-	}
-
-	if from.RawQuery != "" && from.Path == comparePath && from.RawQuery == reqUrl.RawQuery {
-		toPath := rule.To
-
-		to, errTo := ParseUrlWithContext(toPath, ctx)
-
-		if errTo != nil {
-			return MatchResult{
-				ResolvedTo:     nil,
-				IsMatched:      false,
-				IsHostRedirect: false,
-				Error:          errTo,
-			}
-		}
-
-		return MatchResult{
-			ResolvedTo:     to,
-			Match:          nil,
-			IsMatched:      true,
-			IsHostRedirect: false,
-			Source:         rule,
-		}
-	}
-
-	// skip from query based rules as well as we handle them above, so any "applicable" query rules should not reach here
-	if !ok || from.RawQuery != "" {
+	if !ok {
 		return MatchResult{
 			ResolvedTo:     nil,
 			IsMatched:      false,
@@ -114,19 +81,35 @@ func MatchUrlToRule(rule redirects.Rule, reqUrl *url.URL, ctx *MatchContext) Mat
 		}
 	}
 
-	hostToHost := from.Host != "" && to.Host != ""
-	hostToRelative := from.Host != "" && to.Host == ""
-	relativeToHost := from.Host == "" && to.Host != ""
-
-	// dont need to redirect if on the same host, or no host on rule.To
-	isHostRedirect := to.Host != "" && to.Host != reqUrl.Host
-
 	skipMatch := MatchResult{
 		ResolvedTo:     to,
 		Match:          &matched,
 		IsMatched:      false,
 		IsHostRedirect: false,
 	}
+
+	/*
+	 * If this rule has a query string element to it, we need to perform an identical match ONLY after the initial match of the path
+	 */
+
+	if from.RawQuery != "" && from.RawQuery == reqUrl.RawQuery {
+		return MatchResult{
+			ResolvedTo:     to,
+			Match:          &matched,
+			IsMatched:      true,
+			IsHostRedirect: false,
+			Source:         rule,
+		}
+	} else if from.RawQuery != "" {
+		return skipMatch
+	}
+
+	hostToHost := from.Host != "" && to.Host != ""
+	hostToRelative := from.Host != "" && to.Host == ""
+	relativeToHost := from.Host == "" && to.Host != ""
+
+	// dont need to redirect if on the same host, or no host on rule.To
+	isHostRedirect := to.Host != "" && to.Host != reqUrl.Host
 
 	if (hostToHost || hostToRelative) && from.Host != reqUrl.Host {
 		return skipMatch
