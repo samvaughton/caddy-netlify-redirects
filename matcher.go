@@ -117,7 +117,7 @@ func MatchUrlToRule(rule redirects.Rule, reqUrl *url.URL, ctx *MatchContext) Mat
 				return skipMatch
 			}
 
-			if strings.HasSuffix(ctx.OriginalUrl.String(), "/") == false {
+			if strings.HasSuffix(ctx.OriginalUrl.Path, "/") == false {
 				// redirect
 				prefixedTo := reqUrl
 				prefixedTo.Path = fmt.Sprintf("%s/", prefixedTo.Path)
