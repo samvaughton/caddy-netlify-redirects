@@ -58,7 +58,40 @@ func MatchUrlToRule(rule redirects.Rule, reqUrl *url.URL, ctx *MatchContext) Mat
 	path := urlpath.New(strings.Trim(from.Path, "/"))
 	matched, ok := path.Match(strings.Trim(reqUrl.Path, "/"))
 
-	if !ok {
+	/*
+	 * If this rule has a query string element to it, we need to perform an identical match ONLY
+	 */
+
+	comparePath := reqUrl.Path
+	if comparePath == "" {
+		comparePath = "/"
+	}
+
+	if from.RawQuery != "" && from.Path == comparePath && from.RawQuery == reqUrl.RawQuery {
+		toPath := rule.To
+
+		to, errTo := ParseUrlWithContext(toPath, ctx)
+
+		if errTo != nil {
+			return MatchResult{
+				ResolvedTo:     nil,
+				IsMatched:      false,
+				IsHostRedirect: false,
+				Error:          errTo,
+			}
+		}
+
+		return MatchResult{
+			ResolvedTo:     to,
+			Match:          nil,
+			IsMatched:      true,
+			IsHostRedirect: false,
+			Source:         rule,
+		}
+	}
+
+	// skip from query based rules as well as we handle them above, so any "applicable" query rules should not reach here
+	if !ok || from.RawQuery != "" {
 		return MatchResult{
 			ResolvedTo:     nil,
 			IsMatched:      false,
@@ -139,6 +172,7 @@ func MatchUrlToRule(rule redirects.Rule, reqUrl *url.URL, ctx *MatchContext) Mat
 		Match:          &matched,
 		IsMatched:      true,
 		IsHostRedirect: isHostRedirect,
+		Source:         rule,
 	}
 }
 

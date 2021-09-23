@@ -20,6 +20,7 @@ type MatchContext struct {
 type MatchResult struct {
 	Match      *urlpath.Match
 	ResolvedTo *url.URL
+	Source     redirects.Rule
 
 	IsMatched      bool
 	IsHostRedirect bool

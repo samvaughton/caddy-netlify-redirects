@@ -40,18 +40,17 @@ func (m Middleware) ServeHTTP(w http.ResponseWriter, r *http.Request, next caddy
 		OriginalUrl: r.URL,
 	}
 
+	reqUrl, err := ParseUrlWithContext(path.Join(r.Host, r.URL.Path), mc)
+
+	if err != nil {
+		m.Logger.Error(err.Error())
+
+		return err
+	}
+
+	reqUrl.RawQuery = r.URL.RawQuery
+
 	for _, rule := range m.Redirects {
-
-		reqUrl, err := ParseUrlWithContext(path.Join(r.Host, r.URL.Path), mc)
-
-		if err != nil {
-			m.Logger.Error(err.Error())
-
-			continue
-		}
-
-		reqUrl.RawQuery = r.URL.RawQuery
-
 		result := MatchUrlToRule(rule, reqUrl, mc)
 
 		if result.Error != nil {
