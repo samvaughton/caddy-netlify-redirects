@@ -2,6 +2,8 @@
 
 ***For use with Caddy2.***
 
+### Warning: This module does not handle query string matching the same as Netlify. It will only perform *exact* match.
+
 Enables Caddy to use Netlify's `_redirect` file format
 
 This module tries to replicate the way Netlify's _redirects file works.
