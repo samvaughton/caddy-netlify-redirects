@@ -31,7 +31,6 @@ func ParseUrlWithContext(urlStr string, ctx *MatchContext) (*url.URL, error) {
 }
 
 func MatchUrlToRule(rule redirects.Rule, reqUrl *url.URL, ctx *MatchContext) MatchResult {
-
 	if reqUrl.Host == "" || reqUrl.Scheme == "" {
 		return MatchResult{
 			ResolvedTo:     nil,
@@ -102,6 +101,37 @@ func MatchUrlToRule(rule redirects.Rule, reqUrl *url.URL, ctx *MatchContext) Mat
 
 	if relativeToHost && to.Host == reqUrl.Host {
 		return skipMatch
+	}
+
+	specialToRules := strings.Split(rule.To, "|")
+
+	for _, sItem := range specialToRules {
+		if sItem == "$ENFORCE_TRAILING_SLASH" {
+			// check to make sure this isn't a file request
+			parts := strings.Split(ctx.OriginalUrl.Path, ".")
+			if
+			// make sure parts is greater than two, and then verify that the final element is one of these
+			len(parts) >= 2 &&
+				len(parts[len(parts)-1]) >= 2 &&
+				len(parts[len(parts)-1]) <= 5 {
+				return skipMatch
+			}
+
+			if strings.HasSuffix(ctx.OriginalUrl.String(), "/") == false {
+				// redirect
+				prefixedTo := reqUrl
+				prefixedTo.Path = fmt.Sprintf("%s/", prefixedTo.Path)
+
+				return MatchResult{
+					ResolvedTo:     prefixedTo,
+					Match:          &matched,
+					IsMatched:      true,
+					IsHostRedirect: isHostRedirect,
+				}
+			}
+
+			return skipMatch
+		}
 	}
 
 	return MatchResult{

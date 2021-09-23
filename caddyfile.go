@@ -44,7 +44,13 @@ func parseCaddyfile(h httpcaddyfile.Helper) (caddyhttp.MiddlewareHandler, error)
 				}
 			}
 
-			m.Redirects = redirects.Must(redirects.ParseString(allRedirects))
+			redir, err := redirects.ParseString(allRedirects)
+
+			if err != nil {
+				m.Logger.Error(err.Error())
+			} else {
+				m.Redirects = redir
+			}
 		}
 	}
 

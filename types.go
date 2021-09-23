@@ -13,7 +13,8 @@ type Middleware struct {
 }
 
 type MatchContext struct {
-	Scheme string
+	Scheme      string
+	OriginalUrl *url.URL
 }
 
 type MatchResult struct {

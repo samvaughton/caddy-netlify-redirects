@@ -30,14 +30,14 @@ func (m *Middleware) Provision(ctx caddy.Context) error {
 }
 
 func (m Middleware) ServeHTTP(w http.ResponseWriter, r *http.Request, next caddyhttp.Handler) error {
-
 	scheme := "http://"
 	if r.TLS != nil {
 		scheme = "https://"
 	}
 
 	mc := &MatchContext{
-		Scheme: scheme,
+		Scheme:      scheme,
+		OriginalUrl: r.URL,
 	}
 
 	for _, rule := range m.Redirects {
@@ -49,6 +49,8 @@ func (m Middleware) ServeHTTP(w http.ResponseWriter, r *http.Request, next caddy
 
 			continue
 		}
+
+		reqUrl.RawQuery = r.URL.RawQuery
 
 		result := MatchUrlToRule(rule, reqUrl, mc)
 
