@@ -170,9 +170,5 @@ func replaceParams(to string, matched urlpath.Match) string {
 }
 
 func replaceSplat(to string, matched urlpath.Match) string {
-	if matched.Trailing != "" {
-		to = strings.ReplaceAll(to, ":splat", matched.Trailing)
-	}
-
-	return to
+	return strings.ReplaceAll(to, ":splat", matched.Trailing)
 }

@@ -30,6 +30,7 @@ func TestRedirects(t *testing.T) {
 		/accommodation/*  /accommodation/  200
 
 		http://one.test:2021/* http://two.test:2021/:splat
+		https://lch.k8.rentivo.com/* https://lakecomohomes.com/:splat
 		one.test:/2021/no-scheme two.test:2021/:splat
 	`))
 
@@ -95,6 +96,18 @@ func TestRedirects(t *testing.T) {
 			true,
 			true,
 			"http://two.test:2021/redirect/foobar",
+		},
+		{
+			MustParseUrl("https://lch.k8.rentivo.com/example"),
+			true,
+			true,
+			"https://lakecomohomes.com/example",
+		},
+		{
+			MustParseUrl("https://lch.k8.rentivo.com/"),
+			true,
+			true,
+			"https://lakecomohomes.com/",
 		},
 	}
 
