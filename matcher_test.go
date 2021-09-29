@@ -30,7 +30,8 @@ func TestRedirects(t *testing.T) {
 		/accommodation/*  /accommodation/  200
 
 		http://one.test:2021/* http://two.test:2021/:splat
-		https://lch.k8.rentivo.com/* https://lakecomohomes.com/:splat
+		http://lch.k8.rentivo.com/* http://lakecomohomes.com/:splat
+		http://lakecomohomes.com/* http://www.lakecomohomes.com/:splat
 		one.test:/2021/no-scheme two.test:2021/:splat
 	`))
 
@@ -98,16 +99,28 @@ func TestRedirects(t *testing.T) {
 			"http://two.test:2021/redirect/foobar",
 		},
 		{
-			MustParseUrl("https://lch.k8.rentivo.com/example"),
+			MustParseUrl("http://lch.k8.rentivo.com/example"),
 			true,
 			true,
-			"https://lakecomohomes.com/example",
+			"http://lakecomohomes.com/example",
 		},
 		{
-			MustParseUrl("https://lch.k8.rentivo.com/"),
+			MustParseUrl("http://lch.k8.rentivo.com/"),
 			true,
 			true,
-			"https://lakecomohomes.com/",
+			"http://lakecomohomes.com/",
+		},
+		{
+			MustParseUrl("http://lch.k8.rentivo.com"),
+			true,
+			true,
+			"http://lakecomohomes.com/",
+		},
+		{
+			MustParseUrl("http://lakecomohomes.com"),
+			true,
+			true,
+			"http://www.lakecomohomes.com/",
 		},
 	}
 
